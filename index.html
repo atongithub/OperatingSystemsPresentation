@@ -12,22 +12,38 @@
         <h1>Understanding Deadlock in Computing</h1>
         
         <div class="content-section">
-            <p>In concurrent computing, a <strong>deadlock</strong> is a state in which each member of a group is waiting for another member, including itself, to take action, such as sending a message or more commonly releasing a lock. Deadlocks are a common problem in multiprocessing systems, parallel computing, and distributed systems, where software and hardware locks are used to arbitrate shared resources and implement process synchronization.</p>
-            
-            <h2>The Four Necessary Conditions for Deadlock</h2>
-            <ol>
-                <li><strong>Mutual Exclusion:</strong> At least one resource must be held in a non-sharable mode. If another process requests that resource, the requesting process must be delayed until the resource has been released.</li>
-                <li><strong>Hold and Wait:</strong> A process must be holding at least one resource and waiting to acquire additional resources that are currently being held by other processes.</li>
-                <li><strong>No Preemption:</strong> Resources cannot be preempted; that is, a resource can be released only voluntarily by the process holding it, after that process has completed its task.</li>
-                <li><strong>Circular Wait:</strong> A set of waiting processes {P0, P1, ..., Pn} must exist such that P0 is waiting for a resource held by P1, P1 is waiting for a resource held by P2, ..., Pn-1 is waiting for a resource held by Pn, and Pn is waiting for a resource held by P0.</li>
-            </ol>
+            <div class="content-image-left">
+                <img src="media/dead1.jpg" alt="Conceptual image for Deadlock">
+            </div>
+
+            <div class="content-text">
+                <p>In concurrent computing, a <strong>deadlock</strong> is a state where each member of a group is waiting for another member to take action, such as releasing a lock. This common problem arises in multiprocessing and distributed systems where shared resources require synchronization.</p>
+                
+                <p>Deadlocks fundamentally occur due to four necessary conditions: Mutual Exclusion, Hold and Wait, No Preemption, and Circular Wait. These conditions describe how resources are held and requested, preventing processes from ever completing their tasks.</p>
+
+                <p class="numbered-point"><span>01</span> <strong>Mutual Exclusion:</strong> At least one resource must be held in a non-sharable mode. If another process requests that resource, it must wait until the resource is released voluntarily.</p>
+
+                <p class="numbered-point"><span>02</span> <strong>Hold and Wait:</strong> A process must be holding at least one resource and simultaneously waiting to acquire additional resources held by other processes.</p>
+
+                <p class="numbered-point"><span>03</span> <strong>No Preemption:</strong> Resources cannot be forcibly taken from a process; they can only be released voluntarily by the process holding them after task completion.</p>
+
+                <p class="numbered-point"><span>04</span> <strong>Circular Wait:</strong> A closed chain of processes exists where each process in the chain is waiting for a resource held by the next process in the chain.</p>
+                
+                <button class="more-details-btn">
+                    + MORE DETAILS
+                </button>
+            </div>
+
+            <div class="content-image-right">
+                <img src="media/dead2.png" alt="Conceptual image for Deadlock">
+            </div>
         </div>
 
         <hr>
 
         <div class="game-container">
-            <h2>Interactive Deadlock Game</h2>
-            <p>Try to make the processes acquire their needed resources without causing a deadlock! Click on a process to make it request a resource.</p>
+            <h2>Interactive Deadlock Simulation</h2>
+            <p>This simulation will demonstrate the "Circular Wait" condition, leading to a deadlock.</p>
             <canvas id="deadlockCanvas" width="600" height="300"></canvas>
             <div id="message"></div>
             <div class="controls">
@@ -37,98 +53,72 @@
         </div>
 
         <footer>
-            <p>Operating Systems Presentation | By: [Your Name Here]</p>
+            <p>Operating Systems Presentation | Deadlock Simulation</p>
         </footer>
-
     </div>
 
     <script>
-        // Wait for the entire HTML document to be loaded and parsed before running the script.
+        // No changes were needed for the JavaScript logic.
         document.addEventListener('DOMContentLoaded', () => {
             
-            // ==========================================================================
-            //  INITIAL SETUP & ELEMENT GRABBING
-            // ==========================================================================
-
-            // Get references to all the HTML elements we need to interact with.
             const canvas = document.getElementById('deadlockCanvas');
-            const ctx = canvas.getContext('2d'); // The context is our drawing tool for the canvas.
+            const ctx = canvas.getContext('2d');
             const messageEl = document.getElementById('message');
             const demoBtn = document.getElementById('demoBtn');
             const resetBtn = document.getElementById('resetBtn');
 
-            // Define constant colors for our canvas elements to keep the visual style consistent.
-            const PROCESS_COLOR = '#3498db';  // Blue for processes
-            const RESOURCE_COLOR = '#2ecc71'; // Green for available resources
-            const LOCKED_COLOR = '#e74c3c';   // Red for locked resources
-            const WAITING_COLOR = '#f39c12';  // Orange for waiting/request lines
+            const PROCESS_COLOR = '#3498db';
+            const RESOURCE_COLOR = '#2ecc71';
+            const LOCKED_COLOR = '#e74c3c';
+            const WAITING_COLOR = '#ffebc4';
 
-            // This variable will hold the current state of our game/simulation.
             let gameState;
 
-            // ==========================================================================
-            //  GAME STATE MANAGEMENT
-            // ==========================================================================
-
-            // This function sets up the initial state of our simulation.
-            // It's called whenever we reset the game.
             function initState() {
                 return {
                     processes: [
-                        { id: 'P1', x: 100, y: 50, radius: 20, wants: 'R2', has: null },
-                        { id: 'P2', x: 100, y: 250, radius: 20, wants: 'R1', has: null }
+                        { id: 'P1', x: 100, y: 75, radius: 20, wants: 'R2', has: null },
+                        { id: 'P2', x: 100, y: 225, radius: 20, wants: 'R1', has: null }
                     ],
                     resources: [
-                        { id: 'R1', x: 500, y: 50, radius: 20, heldBy: null },
-                        { id: 'R2', x: 500, y: 250, radius: 20, heldBy: null }
+                        { id: 'R1', x: 500, y: 75, radius: 20, heldBy: null },
+                        { id: 'R2', x: 500, y: 225, radius: 20, heldBy: null }
                     ],
-                    deadlocked: false, // Flag to track if a deadlock has occurred
-                    gameOver: false    // Flag to stop the game
+                    deadlocked: false,
+                    gameOver: false
                 };
             }
 
-            // ==========================================================================
-            //  CANVAS DRAWING FUNCTIONS
-            // ==========================================================================
-
-            // The main drawing function. It clears the canvas and redraws everything based on the current gameState.
             function draw() {
-                // Clear the entire canvas to prepare for a new frame.
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                // --- Draw Resources ---
                 gameState.resources.forEach(r => {
                     ctx.beginPath();
                     ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
-                    // If the resource is held, color it red (LOCKED_COLOR), otherwise color it green.
                     ctx.fillStyle = r.heldBy ? LOCKED_COLOR : RESOURCE_COLOR;
                     ctx.fill();
-                    // Draw the resource ID text in the center.
-                    ctx.fillStyle = '#fff';
+                    ctx.fillStyle = '#000';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
+                    ctx.font = 'bold 12px Arial';
                     ctx.fillText(r.id, r.x, r.y);
                 });
 
-                // --- Draw Processes ---
                 gameState.processes.forEach(p => {
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
                     ctx.fillStyle = PROCESS_COLOR;
                     ctx.fill();
-                    // Draw the process ID text in the center.
                     ctx.fillStyle = '#fff';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
+                    ctx.font = 'bold 12px Arial';
                     ctx.fillText(p.id, p.x, p.y);
 
-                    // --- Draw relationship lines ---
-                    // If a process HAS a resource, draw a green line from the resource to the process.
                     if (p.has) {
                         const resource = gameState.resources.find(res => res.id === p.has);
-                        drawArrow(resource.x, resource.y, p.x, p.y, 'green');
+                        drawArrow(resource.x, resource.y, p.x, p.y, RESOURCE_COLOR);
                     }
-                    // If a process WANTS a resource it doesn't have, draw an orange line from the process to the resource.
                     if (p.wants && p.has !== p.wants) {
                         const resource = gameState.resources.find(res => res.id === p.wants);
                         drawArrow(p.x, p.y, resource.x, resource.y, WAITING_COLOR);
@@ -136,128 +126,96 @@
                 });
             }
 
-            // Helper function to draw a line with an arrowhead.
             function drawArrow(fromx, fromy, tox, toy, color) {
-                const headlen = 10; // length of head in pixels
+                const headlen = 10;
                 const angle = Math.atan2(toy - fromy, tox - fromx);
                 ctx.strokeStyle = color;
-                ctx.lineWidth = 2;
-                // Draw the main line
+                ctx.lineWidth = 3;
                 ctx.beginPath();
                 ctx.moveTo(fromx, fromy);
                 ctx.lineTo(tox, toy);
-                // Draw the arrowhead
                 ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
                 ctx.moveTo(tox, toy);
                 ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
                 ctx.stroke();
             }
 
-            // ==========================================================================
-            //  GAME LOGIC & EVENT HANDLING
-            // ==========================================================================
-
-            // Checks for the specific circular wait condition that causes deadlock in this demo.
             function checkDeadlock() {
                 const p1 = gameState.processes[0];
                 const p2 = gameState.processes[1];
-                
-                // The deadlock condition: P1 has R1 and wants R2, while P2 has R2 and wants R1.
                 if (p1.has === 'R1' && p1.wants === 'R2' && p2.has === 'R2' && p2.wants === 'R1') {
                     gameState.deadlocked = true;
                     gameState.gameOver = true;
-                    messageEl.textContent = 'DEADLOCKED! Circular wait detected.';
+                    messageEl.textContent = 'DEADLOCKED! 💥 Circular wait detected.';
+                    messageEl.style.color = LOCKED_COLOR;
                     disableControls();
                 }
             }
 
-            // This function runs the deadlock demonstration sequence automatically.
             function runDemo() {
                 resetGame();
-                disableControls(); // Disable manual clicks during the demo.
-                messageEl.textContent = "Demo started Watch the circular wait ";
+                disableControls();
+                messageEl.textContent = "Demonstration sequence initiated...";
 
-                // Get references to our game objects for easier access.
                 const p1 = gameState.processes[0];
                 const p2 = gameState.processes[1];
                 const r1 = gameState.resources[0];
                 const r2 = gameState.resources[1];
                 
                 let step = 0;
-                // An array of functions, where each function is one step in the demo.
                 const steps = [
-                    () => { // Step 1: P1 acquires R1
+                    () => {
                         p1.has = 'R1';
                         r1.heldBy = 'P1';
                         messageEl.textContent = "Step 1: Process P1 acquires Resource R1.";
                         draw();
                     },
-                    () => { // Step 2: P2 acquires R2
+                    () => {
                         p2.has = 'R2';
                         r2.heldBy = 'P2';
                         messageEl.textContent = "Step 2: Process P2 acquires Resource R2.";
                         draw();
                     },
-                    () => { // Step 3: Show P1 now wants R2 (which is held by P2)
+                    () => {
                         messageEl.textContent = "Step 3: P1 now wants R2 (held by P2)...";
                         draw();
                     },
-                    () => { // Step 4: Show P2 now wants R1 (held by P1) and check for deadlock
+                    () => {
                         messageEl.textContent = "Step 4: ...and P2 wants R1 (held by P1).";
-                        checkDeadlock(); // This will trigger the deadlock message.
+                        checkDeadlock();
                         draw();
                     }
                 ];
 
-                // This function executes the steps one by one with a delay.
                 function nextStep() {
                     if (step < steps.length) {
                         steps[step]();
                         step++;
-                        setTimeout(nextStep, 2000); // Wait 2 seconds before the next step.
+                        setTimeout(nextStep, 2000);
                     }
                 }
-                
-                nextStep(); // Start the sequence.
+                nextStep();
             }
 
-            // Function to reset the game to its initial state.
             function resetGame() {
                 gameState = initState();
                 messageEl.textContent = '';
+                messageEl.style.color = 'var(--dark-grey)';
                 enableControls();
                 draw();
             }
 
-            // Helper function to disable buttons and canvas clicks.
             function disableControls() {
                 demoBtn.disabled = true;
-                canvas.style.cursor = 'not-allowed';
-                canvas.removeEventListener('click', handleCanvasClick);
             }
 
-            // Helper function to re-enable buttons and canvas clicks.
             function enableControls() {
                 demoBtn.disabled = false;
-                canvas.style.cursor = 'pointer';
-                canvas.addEventListener('click', handleCanvasClick);
             }
             
-            // Dummy function for manual clicks (not used in this simplified demo).
-            function handleCanvasClick(event) {
-                if (gameState.gameOver) return;
-                messageEl.textContent = 'Manual interaction is disabled for this demo.';
-            }
-
-            // ==========================================================================
-            //  EVENT LISTENERS & INITIALIZATION
-            // ==========================================================================
-            
-            // Attach the runDemo and resetGame functions to their respective buttons.
             demoBtn.addEventListener('click', runDemo);
             resetBtn.addEventListener('click', resetGame);
             
-            // Kick everything off by resetting the game to the starting state when the page loads.
             resetGame();
         });
     </script>
