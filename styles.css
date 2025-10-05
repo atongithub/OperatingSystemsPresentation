@@ -1,0 +1,134 @@
+/* ==========================================================================
+   Global Variables and Page Theme
+   ========================================================================== */
+
+/* The :root selector targets the highest-level element in the DOM, the <html> element.
+   It's the standard place to declare global CSS variables. */
+:root {
+    /* -- We define a color palette here for easy reuse and theme consistency. */
+    --dark-grey: #3f3f3f;
+    --yellow: #ffebc4;      /* A nice highlight color */
+    --black: black;
+    --beige: #fbe6c0;
+    --brown: #201914;       /* Used for the dark background */
+    --background: #fffdf5;
+    --darkest-background: #d7d1c3;
+    --dark-green: #2d3622;
+
+}
+
+/* ==========================================================================
+   Base Body and Layout Styles
+   ========================================================================== */
+
+body {
+    /* -- Background and Text Color -- */
+    background-color: var(--brown); /* Sets the dark background using our variable */
+    color: var(--beige);       /* Default text color for the page */
+
+    /* -- Typography -- */
+    font-family: 'Neuehaasdisplay Roman', Arial, sans-serif; /* Primary font */
+    font-size: 16px;            /* Base font size for readability */
+    line-height: 1.6;           /* Spacing between lines of text */
+
+    /* -- Layout -- */
+    margin: 0;                  /* Removes default browser margin */
+    padding: 20px;              /* Adds some space around the content */
+    display: flex;              /* Enables Flexbox for easy centering */
+    flex-direction: column;     /* Stacks flex items vertically */
+    align-items: center;        /* Centers the main container horizontally */
+}
+
+/* ==========================================================================
+   Component Styles
+   ========================================================================== */
+
+/* Styles for the main content card that holds everything */
+.container {
+    max-width: 1100px;           /* Prevents the container from being too wide on large screens */
+    width: 100%;                /* Ensures the container is responsive on smaller screens */
+    background: #201914;           /* A white background makes the card pop against the dark body */
+    color: #333;                /* Darker text color for contrast on the white background */
+    padding: 20px;              /* Inner spacing for the content */
+    /* border-radius: 12px;        Rounded corners for a modern look */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* A subtle shadow adds depth */
+}
+
+/* Styles for the main headings */
+h1, h2 {
+    color: #fbe6c0;             /* A distinct, dark blue for headings */
+    border-bottom: 2px solid #3498db; /* An accent underline */
+    padding-bottom: 10px;       /* Spacing between the text and the underline */
+}
+
+/* Styles for the interactive game area */
+.game-container {
+    text-align: center;         /* Centers the canvas and buttons */
+    margin-top: 30px;           /* Space above the game container */
+    padding: 20px;              /* Inner spacing */
+    border: 1px solid #ddd;     /* A light border */
+    border-radius: 8px;         /* Rounded corners */
+    background-color: #ecf0f1;  /* A slightly off-white background */
+}
+
+/* Styles for the HTML5 canvas element where the game is drawn */
+canvas {
+    background-color: #ffffff;  /* A solid white background for the drawing area */
+    border: 2px solid #bdc3c7;  /* A border to define the canvas area */
+    border-radius: 8px;
+    cursor: pointer;            /* Changes the mouse cursor to a pointer on hover */
+}
+
+/* ==========================================================================
+   Interactive Element Styles (Buttons, Messages)
+   ========================================================================== */
+
+/* Styles for the control buttons */
+.controls button {
+    background-color: #3498db;  /* A nice blue background */
+    color: white;               /* White text for contrast */
+    border: none;               /* Removes the default browser border */
+    padding: 12px 24px;         /* Generous padding to make the buttons easy to click */
+    margin: 5px;                /* Space between buttons */
+    border-radius: 6px;         /* Rounded corners */
+    cursor: pointer;
+    font-size: 16px;
+    /* Smooth transitions for hover effects */
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+/* Hover effect for buttons to provide visual feedback */
+.controls button:hover {
+    background-color: #2980b9;  /* A darker blue on hover */
+    transform: translateY(-2px); /* Lifts the button slightly */
+    box-shadow: 0 2px 5px rgba(255, 235, 196, 0.4); /* Adds a subtle glow using our theme yellow */
+}
+
+/* Styles for disabled buttons */
+.controls button:disabled {
+    background-color: #95a5a6;  /* A grey color to indicate it's inactive */
+    cursor: not-allowed;        /* A cursor that indicates the button can't be clicked */
+    transform: none;            /* Removes the hover lift effect */
+    box-shadow: none;           /* Removes the hover glow effect */
+}
+
+/* Styles for the message area below the canvas */
+#message {
+    margin-top: 15px;
+    font-size: 1.2em;           /* Makes the message text larger */
+    font-weight: bold;          /* Makes the message text stand out */
+    color: #e74c3c;              /* A red color, often used for alerts or errors */
+    height: 25px;               /* Fixed height to prevent layout shifts */
+}
+
+/* ==========================================================================
+   Footer Styles
+   ========================================================================== */
+footer {
+    text-align: center;
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid var(--dark-grey);
+    color: var(--beige);
+    font-size: 0.9em;
+}
