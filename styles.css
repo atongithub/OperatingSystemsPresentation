@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Global Variables & "Quantum Body" Inspired Theme
+   Global Variables
    ========================================================================== */
 
 :root {
@@ -8,49 +8,91 @@
     --black: black;
     --beige: #b8aea7;
     --brown: #201914;
-    --background: #fffdf5;
+    --dark-green: #2d3622;
+    --light-grey-bg: #d7d1c3;
+    --white-bg: #ffffff;
 }
+/* ==========================================================================
+   Header Styles
+   ========================================================================== */
+header {
+    background-color: var(--beige);
+    color: var(--black);
+    padding: 15px 0; /* Vertical and horizontal padding */
+    font-family: 'Neuehaasdisplay Roman', Arial, sans-serif;
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px; /* Aligns with your main container's padding */
+    display: flex;
+    justify-content: space-between; /* Pushes items to opposite ends */
+    align-items: center; /* Vertically centers the items */
+}
+/* Style the links inside the header */
+.header-content a {
+    color: var(--black);
+    text-decoration: none; /* Removes the default underline */
+    font-weight: bold;
+    font-size: 1em;
+    transition: color 0.3s ease; /* Smooth transition for the hover effect */
+}
+
+/* This creates the hover effect */
+.header-content a:hover {
+    color: var(--yellow); /* Changes color to the accent yellow on hover */
+}
+.header-left,
+.header-right {
+    font-weight: bold;
+    font-size: 1em;
+}
+
 
 /* ==========================================================================
    Base Body and Layout Styles
    ========================================================================== */
 
 body {
-    background-color: var(--brown);
-    color: var(--beige);
     font-family: 'Neuehaasdisplay Roman', Arial, sans-serif;
     font-size: 18px;
     line-height: 1.7;
     margin: 0;
 }
 
-/* ==========================================================================
-   Component Styles
-   ========================================================================== */
-
+/* The container now just centers the content and limits its width */
 .container {
     width: 100%;
-    min-height: 100vh;
-    background: transparent;
-    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 40px;
     box-sizing: border-box;
-    border-radius: 24px;
 }
 
-h1, h2 {
-    color: var(--yellow);
-    border-bottom: 2px solid var(--beige);
-    padding-bottom: 15px;
-    margin-bottom: 20px;
+h1, h2, h3 {
+    font-weight: normal;
 }
 
 h1 {
     font-size: 2.5em;
     text-align: left;
+    border-bottom: 2px solid var(--beige);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 h2 {
     font-size: 1.8em;
+    border-bottom: 2px solid; /* Border color will be inherited */
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+h3 {
+    font-size: 1.4em;
+    margin-top: 30px;
+    margin-bottom: 10px;
 }
 
 hr {
@@ -60,25 +102,67 @@ hr {
 }
 
 /* ==========================================================================
-   NEW: Content Section (Quantum Body Style)
+   Section Themes
    ========================================================================== */
-.content-section {
-    color: var(--beige); /* Default text color for this section, will be overridden by .numbered-point */
-    display: grid; /* Enable CSS Grid */
-    /* Define 3 columns: 1 fractional unit for left image, 2 for text, 1 for right image */
-    grid-template-columns: 1fr 2fr 1fr; 
-    gap: 30px; /* Space between grid items */
-    align-items: start; /* Align items to the top of their grid area */
-    margin-top: 50px; /* Space above the section */
-    margin-bottom: 50px; /* Space below the section */
+
+/* Theme 1: Intro Section (Dark Brown) */
+.theme-intro {
+    background-color: var(--brown);
+    color: var(--beige);
+}
+.theme-intro h1, .theme-intro h2 {
+    color: var(--yellow);
+    border-color: var(--beige);
 }
 
-/* Styles for the numbered paragraphs */
+/* Theme 2: Avoidance Section (Light Grey) */
+.theme-avoidance {
+    background-color: var(--light-grey-bg);
+    color: var(--black);
+}
+.theme-avoidance h2, .theme-avoidance h3 {
+    color: var(--black);
+    border-color: var(--dark-grey);
+}
+
+/* Theme 3: Detection Section (White) */
+.theme-detection {
+    background-color: var(--white-bg);
+    color: var(--black);
+}
+.theme-detection h2 {
+    color: var(--black);
+    border-color: var(--dark-grey);
+}
+
+/* Theme 4: Live Demo Section (Dark Green) */
+.theme-demo {
+    background-color: var(--dark-green);
+}
+
+/* ==========================================================================
+   Content Layouts (Grid, etc.)
+   ========================================================================== */
+
+.content-section {
+    display: grid;
+    grid-template-columns: 1.2fr 2fr 1.3fr;
+    gap: 30px;
+    align-items: start;
+    margin-top: 50px;
+}
+
+.two-col-section {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 40px;
+    align-items: center;
+}
+
 .numbered-point {
-    color: var(--beige); /* Text color for the points */
     margin-bottom: 20px;
-    position: relative; /* Needed for positioning the number */
-    padding-left: 40px; /* Space for the number */
+    position: relative;
+    padding-left: 40px;
 }
 
 .numbered-point span {
@@ -86,88 +170,58 @@ hr {
     left: 0;
     top: 0;
     font-weight: bold;
-    color: var(--yellow); /* Number color */
+    color: var(--yellow);
     font-size: 1.2em;
 }
 
-/* Styles for the image containers within the content section */
+.theme-avoidance .numbered-point span, .theme-detection .numbered-point span {
+    color: var(--brown);
+}
+
 .content-image-left,
 .content-image-right {
-    display: flex; /* Use flexbox to center image vertically */
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-    padding: 0; /* Remove any default padding */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.content-image-right {
+    transform: translateY(50px);
 }
 
 .content-image-left img,
 .content-image-right img {
-    max-width: 100%; /* Ensure images don't overflow their containers */
+    max-width: 100%;
     height: auto;
-    display: block; /* Remove extra space below image */
-    border-radius: 12px; /* Rounded corners for images */
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
+    display: block;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
-/* Position the left image in the first grid column */
-.content-image-left {
-    grid-column: 1;
-}
-
-/* Position the text content in the second grid column */
 .content-text {
     grid-column: 2;
 }
 
-/* Position the right image in the third grid column */
-.content-image-right {
-    grid-column: 3;
-}
-
-/* Styles for the "More Details" button */
-.more-details-btn {
-    background-color: transparent;
-    color: var(--yellow);
-    border: 2px solid var(--beige); /* Subtle border for the button */
-    padding: 12px 24px;
-    margin-top: 30px; /* Space above the button */
-    border-radius: 50px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.3s ease;
-    display: inline-block; /* Allows margin-top to work and centering via text-align on parent */
-}
-
-.more-details-btn:hover {
-    background-color: var(--beige);
-    color: var(--brown);
-    border-color: var(--beige);
-}
-
-
 /* ==========================================================================
-   Inverted Demo Box Styles
+   Interactive Demo Box Styles
    ========================================================================== */
 
 .game-container {
     text-align: center;
-    margin-top: 30px;
     padding: 30px;
     border-radius: 16px;
-    background-color: var(--yellow);
-    color: var(--brown);
-    border: none;
-}
-
-.game-container h2,
-.game-container p {
-    color: var(--brown);
+    background-color: var(--dark-green);
+    color: var(--yellow);
+    border: 1px solid var(--yellow);
 }
 
 .game-container h2 {
-    border-bottom: 2px solid var(--brown);
+    color: var(--yellow);
+    border-bottom: 2px solid var(--yellow);
+}
+
+.game-container p {
+    color: var(--yellow);
 }
 
 canvas {
@@ -177,14 +231,10 @@ canvas {
     cursor: pointer;
 }
 
-/* ==========================================================================
-   Interactive Element Styles (Buttons inside game-container)
-   ========================================================================== */
-
 .controls button {
-    background-color: transparent;
-    color: var(--brown);
-    border: 2px solid var(--brown);
+    background-color: var(--yellow);
+    color: var(--dark-green);
+    border: 2px solid var(--yellow);
     padding: 12px 24px;
     margin: 10px;
     border-radius: 50px;
@@ -197,60 +247,105 @@ canvas {
 }
 
 .controls button:hover {
-    background-color: var(--brown);
-    color: var(--yellow);
-}
-
-.controls button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
     background-color: transparent;
-    color: var(--brown);
+    color: var(--yellow);
 }
 
 #message {
     margin-top: 15px;
     font-size: 1.1em;
     font-weight: bold;
-    color: var(--dark-grey);
     height: 25px;
     transition: color 0.3s ease;
 }
 
 /* ==========================================================================
-   Footer Styles
+   NEW: Smooth Scrolling & Section Blending
    ========================================================================== */
-footer {
-    text-align: center;
-    margin-top: 40px;
-    padding-top: 20px;
-    border-top: 1px solid var(--dark-grey);
-    color: var(--dark-grey);
-    font-size: 0.9em;
+/* New styles for JS smooth scroll setup */
+html {
+    overflow: visible; /* Hide the browser's native scrollbar */
 }
 
+#scroll-container {
+    position: fixed; /* Make the container a fixed viewport */
+    top: 0;
+    left: 0;
+    width: 100%;
+    will-change: transform; /* Performance optimization for the transform */
+}
 /* ==========================================================================
-   Media Queries for Responsiveness (Optional, but good practice)
+   Section Blending Effect
    ========================================================================== */
-@media (max-width: 768px) {
-    .content-section {
-        grid-template-columns: 1fr; /* Stack all items in a single column on smaller screens */
-        gap: 20px;
-    }
 
-    .content-image-left,
-    .content-text,
-    .content-image-right {
-        grid-column: 1; /* All items occupy the single column */
-    }
-
-    .content-image-left img,
-    .content-image-right img {
-        max-height: 200px; /* Limit image height on small screens */
-        width: auto;
-    }
-
-    h1 {
-        font-size: 2em;
-    }
+/* We make each theme section a positioning context for its pseudo-element. */
+.theme-intro, .theme-avoidance, .theme-detection, .theme-demo {
+    position: relative;
+    padding-top: 50px; /* Add padding to the top to make space for the curve */
 }
+
+/* This is the pseudo-element that creates the curved "scoop" effect. */
+.theme-avoidance::before, .theme-detection::before, .theme-demo::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50px; /* Controls the depth of the curve */
+    /* This creates the rounded shape */
+    border-bottom-left-radius: 100%;
+    border-bottom-right-radius: 100%;
+}
+
+/* Each pseudo-element takes the background color of the section ABOVE it. */
+.theme-avoidance::before {
+    background-color: var(--brown); /* Matches the intro theme */
+}
+
+.theme-detection::before {
+    background-color: var(--light-grey-bg); /* Matches the avoidance theme */
+}
+
+.theme-demo::before {
+    background-color: var(--white-bg); /* Matches the detection theme */
+}
+
+/*footer*/
+footer {
+    background-color: var(--beige); /* A solid black background for the footer */
+    padding: 30px 0; /* Vertical padding */
+    color: var(--black);
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: center; /* Center the list of names */
+}
+
+.team-members {
+    list-style: none; /* Removes bullet points */
+    padding: 0;
+    margin: 0;
+    display: flex; /* Aligns names in a row */
+    flex-wrap: wrap; /* Allows names to wrap onto the next line on small screens */
+    justify-content: left;
+    gap: 30px; /* Space between each name */
+}
+
+.team-members a {
+    color: var(--black);
+    text-decoration: none; /* Removes the default underline */
+    font-size: 1em;
+    font-weight: bold;
+    font-family: 'Neuehaasdisplay Roman', Arial, sans-serif;
+    transition: color 0.3s ease; /* Smooth transition for the hover effect */
+}
+
+/* This creates the "reactive" hover effect */
+.team-members a:hover {
+    color: var(--yellow); /* Changes color to the accent yellow on hover */
+}
+

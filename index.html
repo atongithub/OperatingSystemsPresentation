@@ -3,95 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Understanding Deadlock</title>
+    <title>Deadlock</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-    <div class="container">
-        <h1>Understanding Deadlock in Computing</h1>
-        
-        <div class="content-section">
-            <div class="content-image-left">
-                <img src="media/dead1.jpg" alt="Conceptual image for Deadlock">
+    <div id="scroll-container">
+    <header>
+        <div class="header-content">
+            <div class="header-left">
+               <a href="#">Operating Systems Project</a>
             </div>
-
-            <div class="content-text">
-                <p>In concurrent computing, a <strong>deadlock</strong> is a state where each member of a group is waiting for another member to take action, such as releasing a lock. This common problem arises in multiprocessing and distributed systems where shared resources require synchronization.</p>
-                
-                <p>Deadlocks fundamentally occur due to four necessary conditions: Mutual Exclusion, Hold and Wait, No Preemption, and Circular Wait. These conditions describe how resources are held and requested, preventing processes from ever completing their tasks.</p>
-
-                <p class="numbered-point"><span>01</span> <strong>Mutual Exclusion:</strong> At least one resource must be held in a non-sharable mode. If another process requests that resource, it must wait until the resource is released voluntarily.</p>
-
-                <p class="numbered-point"><span>02</span> <strong>Hold and Wait:</strong> A process must be holding at least one resource and simultaneously waiting to acquire additional resources held by other processes.</p>
-
-                <p class="numbered-point"><span>03</span> <strong>No Preemption:</strong> Resources cannot be forcibly taken from a process; they can only be released voluntarily by the process holding them after task completion.</p>
-
-                <p class="numbered-point"><span>04</span> <strong>Circular Wait:</strong> A closed chain of processes exists where each process in the chain is waiting for a resource held by the next process in the chain.</p>
-                
-                <button class="more-details-btn">
-                    + MORE DETAILS
-                </button>
-            </div>
-
-            <div class="content-image-right">
-                <img src="media/dead2.png" alt="Conceptual image for Deadlock">
+            <div class="header-right">
+               <a href="#">21CSC202J</a>
             </div>
         </div>
-
-        <hr>
-
-        <div class="game-container">
-            <h2>Interactive Deadlock Simulation</h2>
-            <p>This simulation will demonstrate the "Circular Wait" condition, leading to a deadlock.</p>
-            <canvas id="deadlockCanvas" width="600" height="300"></canvas>
-            <div id="message"></div>
-            <div class="controls">
-                <button id="demoBtn">Run Deadlock Demo</button>
-                <button id="resetBtn">Reset</button>
+    </header>
+    
+    <div class="theme-intro">
+        <div class="container">
+            <h1>Understanding Deadlock in Computing</h1>
+            <div class="content-section">
+                <div class="content-image-left">
+                    <img src="media/dead1.jpg" alt="Conceptual image for Deadlock">
+                </div>
+                <div class="content-text">
+                    <p><strong>Deadlock</strong> is a situation in an operating system where two or more processes are blocked indefinitely, waiting for each other to release the resources that they need. Imagine a circular waiting game where no one can move forward.</p>
+                    <h2>How a Deadlock Happens</h2>
+                    <p>A deadlock can only occur if four necessary conditions are met simultaneously (the Coffman Conditions):</p>
+                    <p class="numbered-point"><span>01</span> <strong>Mutual Exclusion:</strong> At least one resource must be held in a non-sharable mode.</p>
+                    <p class="numbered-point"><span>02</span> <strong>Hold and Wait:</strong> A process holds at least one resource while waiting for another.</p>
+                    <p class="numbered-point"><span>03</span> <strong>No Preemption:</strong> A resource cannot be forcibly taken from a process.</p>
+                    <p class="numbered-point"><span>04</span> <strong>Circular Wait:</strong> A closed chain of processes waits for resources held by each other.</p>
+                </div>
+                <div class="content-image-right">
+                    <img src="media/dead2.png" alt="Conceptual image for Deadlock">
+                </div>
             </div>
         </div>
-
-        <footer>
-            <p>Operating Systems Presentation | Deadlock Simulation</p>
-        </footer>
     </div>
 
+    <div class="theme-avoidance">
+        <div class="container">
+            <div class="two-col-section">
+                <div class="content-image-left">
+                    <img src="media/bankersalgorithm.jpg" alt="Abstract visualization of the Banker's Algorithm">
+                </div>
+                <div class="content-text-full"> 
+                    <h2>How to Avoid Deadlocks with Algorithms</h2>
+                    <p>Deadlock avoidance requires that the operating system be given additional information about how resources are to be requested. With this knowledge, the system can decide for each request whether or not the current state is "safe." A state is safe if the system can allocate resources to each process in some order and still avoid a deadlock.</p>
+                    <h3>The Banker's Algorithm</h3>
+                    <p>This famous algorithm works by simulating the allocation of resources to check for a safe state. It requires knowing the maximum number of resources of each type that each process may request. Imagine a bank where the banker (OS) makes sure that it never lends out money (resources) in such a way that it can't fulfill all outstanding lines of credit (maximum needs).</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="theme-detection">
+        <div class="container">
+            <div class="two-col-section">
+                <div class="content-image-left">
+                    <img src="media/deadlockdetection.jpg" alt="Visualization of a Wait-For Graph">
+                </div>
+                <div class="content-text-full">
+                    <h2>Deadlock Detection</h2>
+                    <p>If deadlocks are not avoided, they must be detected. Deadlock detection algorithms are run periodically to check for their presence. A common approach involves constructing a resource-allocation graph or using wait-for graphs and checking for cycles. A cycle in a wait-for graph indicates a deadlock.</p>
+                    <p>Think of it like a detective searching for a pattern (a cycle) of processes waiting for each other.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="theme-demo">
+        <div class="container">
+            <div class="game-container">
+                <h2>Interactive Deadlock Simulation</h2>
+                <p>This simulation will demonstrate the "Circular Wait" condition, leading to a deadlock.</p>
+                <canvas id="deadlockCanvas" width="600" height="300"></canvas>
+                <div id="message"></div>
+                <div class="controls">
+                    <button id="demoBtn">Run Deadlock Demo</button>
+                    <button id="resetBtn">Reset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <ul class="team-members">
+                <li><a href="#">Sharat Chandraa</a></li>
+                <li><a href="#">Kosuru Sri Vardhan</a></li>
+                <li><a href="#">Atul Govind M E</a></li>
+            </ul>
+        </div>
+    </footer>
+
+
     <script>
-        // No changes were needed for the JavaScript logic.
+        // Your JavaScript remains unchanged
         document.addEventListener('DOMContentLoaded', () => {
-            
             const canvas = document.getElementById('deadlockCanvas');
             const ctx = canvas.getContext('2d');
             const messageEl = document.getElementById('message');
             const demoBtn = document.getElementById('demoBtn');
             const resetBtn = document.getElementById('resetBtn');
-
             const PROCESS_COLOR = '#3498db';
             const RESOURCE_COLOR = '#2ecc71';
             const LOCKED_COLOR = '#e74c3c';
             const WAITING_COLOR = '#ffebc4';
-
             let gameState;
 
             function initState() {
                 return {
-                    processes: [
-                        { id: 'P1', x: 100, y: 75, radius: 20, wants: 'R2', has: null },
-                        { id: 'P2', x: 100, y: 225, radius: 20, wants: 'R1', has: null }
-                    ],
-                    resources: [
-                        { id: 'R1', x: 500, y: 75, radius: 20, heldBy: null },
-                        { id: 'R2', x: 500, y: 225, radius: 20, heldBy: null }
-                    ],
-                    deadlocked: false,
-                    gameOver: false
+                    processes: [{ id: 'P1', x: 100, y: 75, radius: 20, wants: 'R2', has: null },{ id: 'P2', x: 100, y: 225, radius: 20, wants: 'R1', has: null }],
+                    resources: [{ id: 'R1', x: 500, y: 75, radius: 20, heldBy: null },{ id: 'R2', x: 500, y: 225, radius: 20, heldBy: null }],
+                    deadlocked: false, gameOver: false
                 };
             }
-
             function draw() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-
                 gameState.resources.forEach(r => {
                     ctx.beginPath();
                     ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
@@ -103,7 +133,6 @@
                     ctx.font = 'bold 12px Arial';
                     ctx.fillText(r.id, r.x, r.y);
                 });
-
                 gameState.processes.forEach(p => {
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
@@ -114,7 +143,6 @@
                     ctx.textBaseline = 'middle';
                     ctx.font = 'bold 12px Arial';
                     ctx.fillText(p.id, p.x, p.y);
-
                     if (p.has) {
                         const resource = gameState.resources.find(res => res.id === p.has);
                         drawArrow(resource.x, resource.y, p.x, p.y, RESOURCE_COLOR);
@@ -125,7 +153,6 @@
                     }
                 });
             }
-
             function drawArrow(fromx, fromy, tox, toy, color) {
                 const headlen = 10;
                 const angle = Math.atan2(toy - fromy, tox - fromx);
@@ -139,54 +166,32 @@
                 ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
                 ctx.stroke();
             }
-
             function checkDeadlock() {
                 const p1 = gameState.processes[0];
                 const p2 = gameState.processes[1];
                 if (p1.has === 'R1' && p1.wants === 'R2' && p2.has === 'R2' && p2.wants === 'R1') {
                     gameState.deadlocked = true;
                     gameState.gameOver = true;
-                    messageEl.textContent = 'DEADLOCKED! 💥 Circular wait detected.';
+                    messageEl.textContent = 'DEADLOCKED! Circular wait detected.';
                     messageEl.style.color = LOCKED_COLOR;
                     disableControls();
                 }
             }
-
             function runDemo() {
                 resetGame();
                 disableControls();
-                messageEl.textContent = "Demonstration sequence initiated...";
-
+                messageEl.textContent = "Demonstration sequence initiated";
                 const p1 = gameState.processes[0];
                 const p2 = gameState.processes[1];
                 const r1 = gameState.resources[0];
                 const r2 = gameState.resources[1];
-                
                 let step = 0;
                 const steps = [
-                    () => {
-                        p1.has = 'R1';
-                        r1.heldBy = 'P1';
-                        messageEl.textContent = "Step 1: Process P1 acquires Resource R1.";
-                        draw();
-                    },
-                    () => {
-                        p2.has = 'R2';
-                        r2.heldBy = 'P2';
-                        messageEl.textContent = "Step 2: Process P2 acquires Resource R2.";
-                        draw();
-                    },
-                    () => {
-                        messageEl.textContent = "Step 3: P1 now wants R2 (held by P2)...";
-                        draw();
-                    },
-                    () => {
-                        messageEl.textContent = "Step 4: ...and P2 wants R1 (held by P1).";
-                        checkDeadlock();
-                        draw();
-                    }
+                    () => { p1.has = 'R1'; r1.heldBy = 'P1'; messageEl.textContent = "Step 1: Process P1 acquires Resource R1"; draw(); },
+                    () => { p2.has = 'R2'; r2.heldBy = 'P2'; messageEl.textContent = "Step 2: Process P2 acquires Resource R2"; draw(); },
+                    () => { messageEl.textContent = "Step 3: P1 now wants R2 (held by P2)"; draw(); },
+                    () => { messageEl.textContent = "Step 4: P2 wants R1 (held by P1)"; checkDeadlock(); draw(); }
                 ];
-
                 function nextStep() {
                     if (step < steps.length) {
                         steps[step]();
@@ -196,29 +201,69 @@
                 }
                 nextStep();
             }
-
             function resetGame() {
                 gameState = initState();
                 messageEl.textContent = '';
-                messageEl.style.color = 'var(--dark-grey)';
+                messageEl.style.color = 'var(--white-bg)';
                 enableControls();
                 draw();
             }
-
-            function disableControls() {
-                demoBtn.disabled = true;
-            }
-
-            function enableControls() {
-                demoBtn.disabled = false;
-            }
-            
+            function disableControls() { demoBtn.disabled = true; }
+            function enableControls() { demoBtn.disabled = false; }
             demoBtn.addEventListener('click', runDemo);
             resetBtn.addEventListener('click', resetGame);
-            
             resetGame();
         });
     </script>
+    <script>
+        // --- Corrected & Improved Custom Smooth Scroll Logic ---
+        const scrollContainer = document.querySelector('#scroll-container');
+        let currentScroll = 0;
+        let targetScroll = 0;
+        
+        // --- Configuration ---
+        const ease = 0.075; // Controls the "slowness." A smaller value is slower.
 
+        // This function runs every frame to smoothly update the scroll position.
+        function animationLoop() {
+            // Calculate the distance between the current and target scroll positions.
+            const distance = targetScroll - currentScroll;
+            
+            // Move the 'current' position a fraction of the distance. This creates the easing effect.
+            currentScroll += distance * ease;
+
+            // If the movement is negligible, snap to the final position to stop.
+            if (Math.abs(distance) < 0.1) {
+                currentScroll = targetScroll;
+            }
+
+            // Apply the new position to the scroll container using a CSS transform.
+            // This is much smoother than using window.scrollTo().
+            scrollContainer.style.transform = `translateY(-${currentScroll}px)`;
+            
+            // Continue the animation on the next frame.
+            requestAnimationFrame(animationLoop);
+        }
+
+        // Start the continuous animation loop.
+        animationLoop();
+
+        // Listen for the user's scroll wheel input.
+        window.addEventListener('wheel', (event) => {
+            // Add the user's scroll amount to our target.
+            targetScroll += event.deltaY;
+
+            // Clamp the target to prevent scrolling past the top or bottom of the content.
+            const maxScroll = scrollContainer.scrollHeight - window.innerHeight;
+            targetScroll = Math.max(0, Math.min(targetScroll, maxScroll));
+        });
+
+        // We need to update the total scroll height when the window is resized.
+        window.addEventListener('resize', () => {
+            const maxScroll = scrollContainer.scrollHeight - window.innerHeight;
+            targetScroll = Math.max(0, Math.min(targetScroll, maxScroll));
+        });
+    </script>
+</div>
 </body>
 </html>
