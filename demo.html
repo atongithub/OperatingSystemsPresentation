@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Deadlock Demo</title>
+    <style>
+        /* ==========================================================================
+           Global Variables & Theme
+           ========================================================================== */
+        :root {
+            --dark-grey: #3f3f3f;
+            --yellow: #ffebc4;
+            --black: black;
+            --beige: #b8aea7;
+            --brown: #201914;
+            --dark-green: #2d3622;
+            --red-light: #e74c3c;
+            --green-light: #2ecc71;
+        }
+
+        body {
+            font-family: 'Neuehaasdisplay Roman', Arial, sans-serif;
+            font-size: 18px;
+            line-height: 1.6;
+            margin: 0;
+            background-color: var(--brown);
+            color: var(--beige);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* ==========================================================================
+           Main Game Container
+           ========================================================================== */
+        .main-container {
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            font-weight: normal;
+            color: var(--yellow);
+            border-bottom: 2px solid var(--beige);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            max-width: 600px;
+            margin: 0 auto 30px auto;
+        }
+
+        /* ==========================================================================
+           Game-Specific Styles
+           ========================================================================== */
+        .game-wrapper {
+            position: relative; /* Needed for the overlay */
+            background-color: var(--dark-green);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid var(--yellow);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        #game-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: var(--red-light);
+            font-size: 80px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 16px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            z-index: 10;
+        }
+
+        #game-overlay.visible {
+            opacity: 1;
+        }
+        
+        #game-overlay.deadlock {
+            color: var(--yellow); /* Distinct color for deadlock */
+        }
+
+        canvas {
+            background-color: #333;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px 10px;
+            color: var(--yellow);
+            font-size: 1.2em;
+        }
+
+        .stat {
+            font-weight: bold;
+        }
+        
+        button {
+            background-color: var(--yellow);
+            color: var(--dark-green);
+            border: 2px solid var(--yellow);
+            padding: 12px 24px;
+            margin: 5px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: transparent;
+            color: var(--yellow);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .controls-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        button.active-light {
+            background-color: var(--green-light);
+            color: var(--dark-green);
+            border-color: var(--green-light);
+        }
+
+        button.active-light:hover {
+            background-color: #27ae60;
+        }
+        
+        button.all-red-active {
+            background-color: var(--red-light);
+            color: var(--yellow);
+            border-color: var(--red-light);
+        }
+
+        button.danger-light {
+            background-color: var(--red-light);
+            color: var(--yellow);
+            border-color: var(--red-light);
+        }
+        button.danger-light:hover {
+            background-color: #c0392b;
+        }
+        button.danger-light.active-light {
+            box-shadow: 0 0 15px var(--red-light);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <h1>Traffic Deadlock Simulation</h1>
+        <p>Use the buttons to control the traffic lights. Your goal is to let cars pass without causing a crash or a deadlock. Use "Force Deadlock" to see how a gridlock happens!</p>
+
+        <div class="game-wrapper">
+            <div id="game-overlay"></div>
+            <canvas id="trafficCanvas" width="800" height="600"></canvas>
+            <div class="game-stats">
+                <div class="stat">Cars Passed: <span id="carsPassed">0</span></div>
+                <div class="stat">High Score: <span id="highScore">0</span></div>
+            </div>
+            <div class="controls-container">
+                <button id="ns-lights-btn">Control N/S</button>
+                <button id="ew-lights-btn">Control E/W</button>
+                <button id="all-red-btn">All Red</button>
+                <button id="all-green-btn" class="danger-light">All Green</button>
+                <button id="force-deadlock-btn" class="danger-light">Force Deadlock</button>
+                <button id="resetBtn">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('trafficCanvas');
+            const ctx = canvas.getContext('2d');
+            const overlayEl = document.getElementById('game-overlay');
+            const carsPassedEl = document.getElementById('carsPassed');
+            const highScoreEl = document.getElementById('highScore');
+            const resetBtn = document.getElementById('resetBtn');
+            const nsBtn = document.getElementById('ns-lights-btn');
+            const ewBtn = document.getElementById('ew-lights-btn');
+            const allRedBtn = document.getElementById('all-red-btn');
+            const allGreenBtn = document.getElementById('all-green-btn');
+            const forceDeadlockBtn = document.getElementById('force-deadlock-btn');
+
+            const ROAD_WIDTH = 100;
+            const CAR_WIDTH = 30;
+            const CAR_HEIGHT = 50;
+            const INTERSECTION_BUFFER = 10;
+
+            let cars = [];
+            let trafficLights = {};
+            let carsPassed = 0;
+            let highScore = localStorage.getItem('trafficHighScore') || 0;
+            let gameOver = false;
+            let lastSpawnTime = 0;
+
+            highScoreEl.textContent = highScore;
+
+            function Car(x, y, direction) {
+                this.x = x; this.y = y; this.width = CAR_WIDTH; this.height = CAR_HEIGHT;
+                this.direction = direction; this.speed = 2; this.state = 'moving';
+                this.color = `hsl(${Math.random() * 360}, 80%, 60%)`;
+            }
+
+            function getCarBounds(car) {
+                if (car.direction === 'east' || car.direction === 'west') {
+                    return { x: car.x - car.height / 2, y: car.y - car.width / 2, width: car.height, height: car.width };
+                }
+                return { x: car.x - car.width / 2, y: car.y - car.height / 2, width: car.width, height: car.height };
+            }
+
+            function checkRectCollision(rect1, rect2) {
+                return rect1.x < rect2.x + rect2.width && rect1.x + rect1.width > rect2.x &&
+                       rect1.y < rect2.y + rect2.height && rect1.y + rect1.height > rect2.y;
+            }
+
+            function setup() {
+                cars = []; carsPassed = 0; carsPassedEl.textContent = 0;
+                gameOver = false; overlayEl.classList.remove('visible', 'deadlock');
+                lastSpawnTime = 0;
+                trafficLights = {
+                    north: { state: 'red', group: 'ns' }, south: { state: 'red', group: 'ns' },
+                    east: { state: 'green', group: 'ew' }, west: { state: 'green', group: 'ew' }
+                };
+                setLights('ew');
+                gameLoop();
+            }
+            
+            function spawnCars(currentTime) {
+                if (gameOver || currentTime - lastSpawnTime < 3500) return;
+                lastSpawnTime = currentTime;
+                ['north', 'south', 'east', 'west'].forEach(dir => {
+                    if (dir === 'north') cars.push(new Car(canvas.width / 2 - ROAD_WIDTH / 2, -CAR_HEIGHT, 'north'));
+                    if (dir === 'south') cars.push(new Car(canvas.width / 2 + ROAD_WIDTH / 2, canvas.height + CAR_HEIGHT, 'south'));
+                    if (dir === 'east') cars.push(new Car(canvas.width + CAR_WIDTH, canvas.height / 2 - ROAD_WIDTH / 2, 'east'));
+                    if (dir === 'west') cars.push(new Car(-CAR_WIDTH, canvas.height / 2 + ROAD_WIDTH / 2, 'west'));
+                });
+            }
+            
+            function endGame(message, type) {
+                gameOver = true;
+                overlayEl.textContent = message;
+                overlayEl.classList.add('visible');
+                if (type === 'deadlock') {
+                    overlayEl.classList.add('deadlock');
+                }
+                if (carsPassed > highScore) {
+                    highScore = carsPassed;
+                    highScoreEl.textContent = highScore;
+                    localStorage.setItem('trafficHighScore', highScore);
+                }
+            }
+            
+            function update() {
+                if (gameOver) return;
+                const intersection = {
+                    x1: canvas.width / 2 - ROAD_WIDTH, x2: canvas.width / 2 + ROAD_WIDTH,
+                    y1: canvas.height / 2 - ROAD_WIDTH, y2: canvas.height / 2 + ROAD_WIDTH
+                };
+
+                cars.forEach((car, index) => {
+                    car.state = 'moving';
+                    const stopZones = {
+                        north: car.y > intersection.y1 - car.height && car.y < intersection.y1,
+                        south: car.y < intersection.y2 + car.height && car.y > intersection.y2,
+                        east: car.x < intersection.x2 + car.width && car.x > intersection.x2,
+                        west: car.x > intersection.x1 - car.width && car.x < intersection.x1
+                    };
+                    if (trafficLights[car.direction].state === 'red' && stopZones[car.direction]) {
+                        car.state = 'waiting';
+                    }
+
+                    for (const otherCar of cars) {
+                        if (car === otherCar) continue;
+                        if (car.direction === otherCar.direction) {
+                            let distance = Infinity; let isOtherCarInFront = false;
+                            if (car.direction === 'north' && car.x === otherCar.x && otherCar.y > car.y) { distance = otherCar.y - car.y; isOtherCarInFront = true; }
+                            else if (car.direction === 'south' && car.x === otherCar.x && otherCar.y < car.y) { distance = car.y - otherCar.y; isOtherCarInFront = true; }
+                            else if (car.direction === 'east' && car.y === otherCar.y && otherCar.x < car.x) { distance = car.x - otherCar.x; isOtherCarInFront = true; }
+                            else if (car.direction === 'west' && car.y === otherCar.y && otherCar.x > car.x) { distance = otherCar.x - car.x; isOtherCarInFront = true; }
+                            const carLength = (car.direction === 'north' || car.direction === 'south') ? car.height : car.width;
+                            if (isOtherCarInFront && distance < carLength + INTERSECTION_BUFFER) { car.state = 'waiting'; break; }
+                        } else {
+                            if (checkRectCollision(getCarBounds(car), getCarBounds(otherCar))) { endGame('CRASH!', 'crash'); return; }
+                        }
+                    }
+
+                    if (car.state === 'moving') {
+                        if (car.direction === 'north') car.y += car.speed;
+                        if (car.direction === 'south') car.y -= car.speed;
+                        if (car.direction === 'east') car.x -= car.speed;
+                        if (car.direction === 'west') car.x += car.speed;
+                    }
+
+                    if ((car.y > canvas.height + car.height) || (car.y < -car.height) || (car.x < -car.width) || (car.x > canvas.width + car.width)) {
+                        cars.splice(index, 1);
+                        carsPassed++;
+                        carsPassedEl.textContent = carsPassed;
+                    }
+                });
+
+                if (cars.length > 3 && cars.every(car => car.state === 'waiting')) {
+                    endGame('DEADLOCK!', 'deadlock');
+                }
+            }
+
+            function draw() {
+                ctx.fillStyle = '#222'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#444';
+                ctx.fillRect(canvas.width / 2 - ROAD_WIDTH, 0, ROAD_WIDTH * 2, canvas.height);
+                ctx.fillRect(0, canvas.height / 2 - ROAD_WIDTH, canvas.width, ROAD_WIDTH * 2);
+
+                const stopLinePositions = {
+                    north: { x: canvas.width / 2 - ROAD_WIDTH, y: canvas.height / 2 - ROAD_WIDTH - 5, w: ROAD_WIDTH * 2, h: 5 },
+                    south: { x: canvas.width / 2 - ROAD_WIDTH, y: canvas.height / 2 + ROAD_WIDTH, w: ROAD_WIDTH * 2, h: 5 },
+                    east: { x: canvas.width / 2 + ROAD_WIDTH, y: canvas.height / 2 - ROAD_WIDTH, w: 5, h: ROAD_WIDTH * 2 },
+                    west: { x: canvas.width / 2 - ROAD_WIDTH - 5, y: canvas.height / 2 - ROAD_WIDTH, w: 5, h: ROAD_WIDTH * 2 }
+                };
+                for (const dir in trafficLights) {
+                    const light = trafficLights[dir];
+                    const pos = stopLinePositions[dir];
+                    ctx.fillStyle = light.state === 'red' ? 'var(--red-light)' : 'var(--green-light)';
+                    ctx.fillRect(pos.x, pos.y, pos.w, pos.h);
+                }
+
+                ctx.strokeStyle = 'var(--yellow)'; ctx.lineWidth = 5; ctx.setLineDash([25, 25]);
+                ctx.beginPath(); ctx.moveTo(canvas.width / 2, 0); ctx.lineTo(canvas.width / 2, canvas.height / 2 - ROAD_WIDTH); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(canvas.width / 2, canvas.height / 2 + ROAD_WIDTH); ctx.lineTo(canvas.width / 2, canvas.height); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(0, canvas.height / 2); ctx.lineTo(canvas.width / 2 - ROAD_WIDTH, canvas.height / 2); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(canvas.width / 2 + ROAD_WIDTH, canvas.height / 2); ctx.lineTo(canvas.width, canvas.height / 2); ctx.stroke();
+                ctx.setLineDash([]);
+
+                cars.forEach(car => {
+                    ctx.save(); ctx.translate(car.x, car.y);
+                    if (car.direction === 'east' || car.direction === 'west') ctx.rotate(Math.PI / 2);
+                    ctx.fillStyle = car.color;
+                    ctx.fillRect(-car.width/2, -car.height/2, car.width, car.height);
+                    ctx.restore();
+                });
+            }
+            
+            function gameLoop(currentTime) {
+                if (!gameOver) {
+                    spawnCars(currentTime);
+                    update();
+                    draw();
+                    requestAnimationFrame(gameLoop);
+                }
+            }
+
+            function setLights(activeGroup) {
+                if (gameOver) return;
+                [nsBtn, ewBtn, allRedBtn, allGreenBtn].forEach(btn => btn.classList.remove('active-light', 'all-red-active'));
+
+                for (const dir in trafficLights) {
+                    const light = trafficLights[dir];
+                    if (activeGroup === 'ns') {
+                        light.state = light.group === 'ns' ? 'green' : 'red';
+                        nsBtn.classList.add('active-light');
+                    } else if (activeGroup === 'ew') {
+                        light.state = light.group === 'ew' ? 'green' : 'red';
+                        ewBtn.classList.add('active-light');
+                    } else if (activeGroup === 'all-red') {
+                        light.state = 'red';
+                        allRedBtn.classList.add('all-red-active');
+                    } else if (activeGroup === 'all-green') {
+                        light.state = 'green';
+                        allGreenBtn.classList.add('active-light');
+                    }
+                }
+            }
+
+            function forceDeadlock() {
+                if(gameOver) setup(); // Reset if already game over
+                cars = []; // Clear existing cars
+                
+                const intersection = {
+                    x1: canvas.width / 2 - ROAD_WIDTH, x2: canvas.width / 2 + ROAD_WIDTH,
+                    y1: canvas.height / 2 - ROAD_WIDTH, y2: canvas.height / 2 + ROAD_WIDTH
+                };
+
+                // Manually place cars just before the intersection
+                cars.push(new Car(canvas.width / 2 - ROAD_WIDTH / 2, intersection.y1 - CAR_HEIGHT / 2, 'north'));
+                cars.push(new Car(canvas.width / 2 + ROAD_WIDTH / 2, intersection.y2 + CAR_HEIGHT / 2, 'south'));
+                cars.push(new Car(intersection.x2 + CAR_WIDTH / 2, canvas.height / 2 - ROAD_WIDTH / 2, 'east'));
+                cars.push(new Car(intersection.x1 - CAR_WIDTH / 2, canvas.height / 2 + ROAD_WIDTH / 2, 'west'));
+                
+                setLights('all-green'); // Turn all lights green to cause the deadlock
+            }
+
+            nsBtn.addEventListener('click', () => setLights('ns'));
+            ewBtn.addEventListener('click', () => setLights('ew'));
+            allRedBtn.addEventListener('click', () => setLights('all-red'));
+            allGreenBtn.addEventListener('click', () => setLights('all-green'));
+            forceDeadlockBtn.addEventListener('click', forceDeadlock);
+            resetBtn.addEventListener('click', setup);
+
+            setup();
+        });
+    </script>
+
+</body>
+</html>
+
