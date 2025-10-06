@@ -33,6 +33,37 @@
             padding: 20px;
             box-sizing: border-box;
         }
+                /* ==========================================================================
+           Header Styles
+           ========================================================================== */
+        header {
+            background-color: var(--beige);
+            padding: 15px 0;
+            font-family: 'Neuehaasdisplay Roman', Arial, sans-serif;
+            width: 100%;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .header-brand, .header-nav a {
+            color: var(--black);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2em;
+            transition: color 0.3s ease;
+        }
+        
+        .header-nav a:hover, .header-brand:hover {
+            color: var(--brown);
+        }
 
         /* ==========================================================================
            Main Game Container
@@ -182,6 +213,15 @@
     </style>
 </head>
 <body>
+        <div class="main-container">
+    <header>
+        <div class="header-content">
+            <a href="index.html" class="header-brand">21CSC202J</a>
+            <nav class="header-nav">
+                <a href="index.html">Back to Presentation</a>
+            </nav>
+        </div>
+    </header>
 
     <div class="main-container">
         <h1>Traffic Deadlock Simulation</h1>
