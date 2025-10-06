@@ -18,30 +18,27 @@
 header {
     background-color: var(--beige);
     color: var(--black);
-    padding: 15px 0; /* Vertical and horizontal padding */
+    padding: 15px 0;
     font-family: 'Neuehaasdisplay Roman', Arial, sans-serif;
 }
 
 .header-content {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 40px; /* Aligns with your main container's padding */
+    padding: 0 40px;
     display: flex;
-    justify-content: space-between; /* Pushes items to opposite ends */
-    align-items: center; /* Vertically centers the items */
+    justify-content: space-between;
+    align-items: center;
 }
-/* Style the links inside the header */
 .header-content a {
     color: var(--black);
-    text-decoration: none; /* Removes the default underline */
+    text-decoration: none;
     font-weight: bold;
     font-size: 1em;
-    transition: color 0.3s ease; /* Smooth transition for the hover effect */
+    transition: color 0.3s ease;
 }
-
-/* This creates the hover effect */
 .header-content a:hover {
-    color: var(--yellow); /* Changes color to the accent yellow on hover */
+    color: var(--yellow);
 }
 .header-left,
 .header-right {
@@ -61,7 +58,6 @@ body {
     margin: 0;
 }
 
-/* The container now just centers the content and limits its width */
 .container {
     width: 100%;
     max-width: 1200px;
@@ -84,7 +80,7 @@ h1 {
 
 h2 {
     font-size: 1.8em;
-    border-bottom: 2px solid; /* Border color will be inherited */
+    border-bottom: 2px solid;
     padding-bottom: 15px;
     margin-bottom: 20px;
 }
@@ -105,7 +101,6 @@ hr {
    Section Themes
    ========================================================================== */
 
-/* Theme 1: Intro Section (Dark Brown) */
 .theme-intro {
     background-color: var(--brown);
     color: var(--beige);
@@ -115,7 +110,6 @@ hr {
     border-color: var(--beige);
 }
 
-/* Theme 2: Avoidance Section (Light Grey) */
 .theme-avoidance {
     background-color: var(--light-grey-bg);
     color: var(--black);
@@ -125,7 +119,6 @@ hr {
     border-color: var(--dark-grey);
 }
 
-/* Theme 3: Detection Section (White) */
 .theme-detection {
     background-color: var(--white-bg);
     color: var(--black);
@@ -135,7 +128,6 @@ hr {
     border-color: var(--dark-grey);
 }
 
-/* Theme 4: Live Demo Section (Dark Green) */
 .theme-demo {
     background-color: var(--dark-green);
 }
@@ -186,7 +178,7 @@ hr {
 }
 
 .content-image-right {
-    transform: translateY(50px);
+    transform: translateY(365px);
 }
 
 .content-image-left img,
@@ -196,6 +188,15 @@ hr {
     display: block;
     border-radius: 12px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    /* ADD THIS LINE for smooth animation */
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* ADD THIS NEW RULE for the hover effect */
+.content-image-left img:hover,
+.content-image-right img:hover {
+    transform: scale(1.05); /* Makes the image 5% larger */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); /* Enhances the shadow */
 }
 
 .content-text {
@@ -260,60 +261,55 @@ canvas {
 }
 
 /* ==========================================================================
-   NEW: Smooth Scrolling & Section Blending
+   Smooth Scrolling & Section Blending
    ========================================================================== */
-/* New styles for JS smooth scroll setup */
+
 html {
-    overflow: visible; /* Hide the browser's native scrollbar */
+    overflow: visible;
 }
 
 #scroll-container {
-    position: fixed; /* Make the container a fixed viewport */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    will-change: transform; /* Performance optimization for the transform */
+    will-change: transform;
 }
-/* ==========================================================================
-   Section Blending Effect
-   ========================================================================== */
 
-/* We make each theme section a positioning context for its pseudo-element. */
 .theme-intro, .theme-avoidance, .theme-detection, .theme-demo {
     position: relative;
-    padding-top: 50px; /* Add padding to the top to make space for the curve */
+    padding-top: 50px;
 }
 
-/* This is the pseudo-element that creates the curved "scoop" effect. */
 .theme-avoidance::before, .theme-detection::before, .theme-demo::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 50px; /* Controls the depth of the curve */
-    /* This creates the rounded shape */
+    height: 50px;
     border-bottom-left-radius: 100%;
     border-bottom-right-radius: 100%;
 }
 
-/* Each pseudo-element takes the background color of the section ABOVE it. */
 .theme-avoidance::before {
-    background-color: var(--brown); /* Matches the intro theme */
+    background-color: var(--brown);
 }
 
 .theme-detection::before {
-    background-color: var(--light-grey-bg); /* Matches the avoidance theme */
+    background-color: var(--light-grey-bg);
 }
 
 .theme-demo::before {
-    background-color: var(--white-bg); /* Matches the detection theme */
+    background-color: var(--white-bg);
 }
 
-/*footer*/
+/* ==========================================================================
+   Footer Styles
+   ========================================================================== */
 footer {
-    background-color: var(--beige); /* A solid black background for the footer */
-    padding: 30px 0; /* Vertical padding */
+    background-color: var(--beige);
+    padding: 30px 0;
     color: var(--black);
 }
 
@@ -322,30 +318,143 @@ footer {
     margin: 0 auto;
     padding: 0 20px;
     display: flex;
-    justify-content: center; /* Center the list of names */
+    justify-content: center;
 }
 
 .team-members {
-    list-style: none; /* Removes bullet points */
+    list-style: none;
     padding: 0;
     margin: 0;
-    display: flex; /* Aligns names in a row */
-    flex-wrap: wrap; /* Allows names to wrap onto the next line on small screens */
+    display: flex;
+    flex-wrap: wrap;
     justify-content: left;
-    gap: 30px; /* Space between each name */
+    gap: 30px;
 }
 
 .team-members a {
     color: var(--black);
-    text-decoration: none; /* Removes the default underline */
+    text-decoration: none;
     font-size: 1em;
     font-weight: bold;
     font-family: 'Neuehaasdisplay Roman', Arial, sans-serif;
-    transition: color 0.3s ease; /* Smooth transition for the hover effect */
+    transition: color 0.3s ease;
 }
 
-/* This creates the "reactive" hover effect */
 .team-members a:hover {
-    color: var(--yellow); /* Changes color to the accent yellow on hover */
+    color: var(--yellow);
 }
 
+/* ==========================================================================
+   UX Improvements (Animations & Back to Top Button)
+   ========================================================================== */
+
+body {
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+body.loaded {
+    opacity: 1;
+}
+
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+.animate-on-scroll.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.back-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: var(--yellow);
+    color: var(--brown);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    text-decoration: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(20px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.back-to-top.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+/* ==========================================================================
+   Media Queries for Responsiveness
+   ========================================================================== */
+@media (max-width: 900px) {
+    .content-section, .two-col-section {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    .content-image-right {
+        transform: none;
+    }
+}
+
+
+/*Mobile*/
+
+/* ==========================================================================
+   Media Queries for Mobile Responsiveness
+   ========================================================================== */
+
+/* This block of styles will only apply to screens 768px wide or smaller (like tablets and phones) */
+@media (max-width: 768px) {
+
+    /* --- Adjust General Layout & Spacing --- */
+    .container {
+        padding: 40px 20px; /* Reduce horizontal padding to give content more space */
+    }
+    
+    .header-content {
+        padding: 0 20px;
+        flex-direction: column; /* Stack header items vertically */
+        gap: 10px;
+    }
+
+    h1 {
+        font-size: 2em; /* Make the main heading a bit smaller on mobile */
+    }
+
+    /* --- Stack the Multi-Column Grids --- */
+    /* This turns both your 3-column and 2-column layouts into a single vertical column */
+    .content-section,
+    .two-col-section {
+        grid-template-columns: 1fr;
+        gap: 25px; /* Adjust the gap for a stacked layout */
+    }
+
+    /* --- Reset Image Positions --- */
+    /* This removes the downward shift from the right image so it aligns correctly in the stack */
+    .content-image-right {
+        transform: none;
+    }
+
+    .content-image-left img,
+    .content-image-right img {
+        max-height: 250px; /* Optional: prevent images from being excessively tall */
+        width: auto;
+    }
+    
+    /* --- Make the Canvas Responsive --- */
+    /* This prevents the canvas from overflowing on small screens */
+    canvas {
+        width: 100%; /* Make the canvas fill its container's width */
+        height: auto; /* Maintain its aspect ratio */
+    }
+}
